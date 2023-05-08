@@ -51,8 +51,8 @@ try {
     const {error, value} = loginvaild.validate(data)
 
     if(error){
-        return res.
-        status(400)
+        return res
+        .status(400)
         .send({ error: error.details[0].message })
     }
    let user = await userModel.findOne({email:value.email})

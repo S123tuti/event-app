@@ -17,5 +17,21 @@ const eventvalid = Joi.object({
 
     
     });
+const updateEventValid = Joi.object({
 
-    module.exports = {eventvalid}
+    type: Joi.string().label("event"),    
+    name: Joi.string().label("name"),    
+    tagline: Joi.string().label("tagline"),    
+    schedule: Joi.string().label("schedule"),    
+    description: Joi.string().label("description"),
+    moderator:  Joi.string().pattern(/^[0-9a-fA-F]{24}$/).label('userId'), 
+    image: Joi.string().label("image"),    
+    category: Joi.string().label("category"),    
+    sub_category: Joi.string().label("sub_category"),    
+    rigor_rank: Joi.number().label("rigor_rank"),  
+    // attendees:Joi.array().items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/).label('UserID')),
+
+    
+    });
+
+    module.exports = {eventvalid,updateEventValid}

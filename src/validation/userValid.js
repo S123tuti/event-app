@@ -4,7 +4,7 @@ const userValid = Joi.object({
     Name: Joi.string().required().label("Name"),
     Email: Joi.string().required().label("Email"),
     gender: Joi.string()
-    .enum("male", "female", "other")
+    .enum("Male", "Female", "Other")
     .required()
     .label("gender"),
     Password: Joi.string()
