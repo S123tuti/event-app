@@ -28,14 +28,16 @@ const authentication  = (req, res, next)=>{
 
 const authorization =  async(req, res, next)=>{
   try {
-    let  eventId = req.params.eventId
-
-    let findeve = await eventModel.findById({eventId})
+    let  eventId = req.params.id
 
     if(!mongoose.isValidObjectId(findeve))
     return res
     .status(400)
     .send({status:false, message:"please inter valid objectId"})
+
+    let findeve = await eventModel.findById({eventId})
+
+    
     if(!findeve || findeve.isDeleted == true){
         return res
         .status(404)

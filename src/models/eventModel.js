@@ -16,7 +16,7 @@ const eventSchema = new mongoose.Schema(
     },
     schedule: {
       type: Date,
-      reeuired: true,
+      required: true,
     },
     description: {
       type: String,

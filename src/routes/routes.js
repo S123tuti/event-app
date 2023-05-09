@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const {createEvent, getById, getAllEvent, updateEvent, deleteEvent} = require("../controllers/eventController");
+
 const {createUser, userLogin} = require("../controllers/userController")
+const {createEvent, getById, getAllEvent, updateEvent, deleteEvent} = require("../controllers/eventController");
 const {authentication,authorization} = require("../middleware/auth")
 
 
@@ -12,11 +13,11 @@ router.post('/register', createUser);
 router.post('/login', userLogin);
 
 // =================================events========================================================================
-router.post('/events', createEvent);
-router.get('/events/:id', getById);
-router.get('/events', getAllEvent);
-router.put('/events/:id', updateEvent);
-router.delete('/events/:id', deleteEvent);
+router.post('/events',authentication, createEvent);
+router.get('/events/:id',authentication,authorization ,getById);
+router.get('/events',authentication,getAllEvent);
+router.put('/events/:id',authentication,authorization ,updateEvent);
+router.delete('/events/:id',authentication,authorization , deleteEvent);
 
 
 module.exports = router;

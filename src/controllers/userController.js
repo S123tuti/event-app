@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { userValid, loginvaild } = require("../validation/userValid");
+const jwt = require("jsonwebtoken")
 
 const createUser = async (req,res) => {
   try {
@@ -13,8 +14,8 @@ const createUser = async (req,res) => {
       .send({ error: error.details[0].message });
     }
 
-    let user = userModel.findOne({ email: value.email });
-
+    let user = await userModel.findOne({ email: value.email });
+// console.log(user)
     if (user)
       return res
         .status(400)
@@ -24,7 +25,7 @@ const createUser = async (req,res) => {
     const encryptedPassword = await bcrypt.hash(value.password, saltRounds);
 
     let createUser = await new userModel({
-      name: value.fname,
+      name: value.name,
       email: value.email,
       gender:value.gender,
       password: encryptedPassword,
@@ -34,7 +35,7 @@ const createUser = async (req,res) => {
     .status(201)
     .send({
       status: true,
-      message: "Author created sucessfully",
+      message: "user created sucessfully",
       data: createUser,
     });
   } catch (err) {

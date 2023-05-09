@@ -1,13 +1,12 @@
 const Joi = require("joi")
-
+let enumgender = ["Male", "Female","Others"]
 const userValid = Joi.object({
-    Name: Joi.string().required().label("Name"),
-    Email: Joi.string().required().label("Email"),
-    gender: Joi.string()
-    .enum("Male", "Female", "Other")
+    name: Joi.string().required().label("Name"),
+    email: Joi.string().required().label("Email"),
+    gender: Joi.string().valid(...enumgender)
     .required()
     .label("gender"),
-    Password: Joi.string()
+    password: Joi.string()
     .min(8)
     .max(15)
     .pattern(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/)
@@ -16,8 +15,8 @@ const userValid = Joi.object({
 })
  
 const loginvaild = Joi.object({
-    Email :Joi.string.require().label("Email"),
-    Password: Joi.string()
+    email :Joi.string().required().label("Email"),
+    password: Joi.string()
     .min(8)
     .max(15)
     .pattern(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/)
