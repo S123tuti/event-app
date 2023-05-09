@@ -1,9 +1,10 @@
 const eventModle = require("../models/eventModel");
+const userModel = require("../models/userModel");
 const { eventvalid, updateEventValid } = require("../validation/eventValid");
 const uploadFile = require("../awsConfig/aws");
 const moment = require("moment-timezone");
 const { parse } = require("dotenv");
-
+const { default: mongoose } = require("mongoose");
 
 const createEvent = async (req, res) => {
   let data = req.body;
@@ -13,11 +14,11 @@ const createEvent = async (req, res) => {
   if (error) {
     return res.status(400).send({ error: error.details[0].message });
   }
-  if(req.decode !== value.moderator){
+  if (req.decode !== value.moderator) {
     return res
-    .status(403)
-    .send({status:false, message :"unauthorized user"})
-}
+      .status(403)
+      .send({ status: false, message: "unauthorized user" });
+  }
   // const istDate = moment
   //   .tz(value.schedule, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
   //   .format("YYYY-MM-DDTHH:mm:ss.000Z");
@@ -25,7 +26,6 @@ const createEvent = async (req, res) => {
   const mongoDateTime = new Date(
     istDateTime.getTime() - istDateTime.getTimezoneOffset() * 60000
   );
-
 
   let img = await uploadFile(files[0]);
   let event = await new eventModle({
@@ -69,18 +69,16 @@ const getAllEvent = async (req, res) => {
     let limit = req.query.limit;
     let skipIndex = (page - 1) * limit;
     let filterdata = await eventModle
-      .find({isDeleted: false})
-      .sort({ schedule: 1})
+      .find({ isDeleted: false })
+      .sort({ schedule: 1 })
       .skip(skipIndex)
       .limit(limit);
 
-    return res
-      .status(200)
-      .send({
-        status: true,
-        message: "data fetch successfully",
-        data: filterdata,
-      });
+    return res.status(200).send({
+      status: true,
+      message: "data fetch successfully",
+      data: filterdata,
+    });
   } catch (err) {
     return res
       .status(500)
@@ -98,17 +96,17 @@ const updateEvent = async (req, res) => {
       return res.status(400).send({ error: err.details[0].message });
     }
     if (value.schedule) {
-    //    const istDate = moment
-    // .tz(value.schedule, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
-    // .format("YYYY-MM-DDTHH:mm:ss.000Z");
-  const istDateTime = new Date(value.schedule);
-   value.schedule= new Date(
-    istDateTime.getTime() - istDateTime.getTimezoneOffset() * 60000
-  );
+      //    const istDate = moment
+      // .tz(value.schedule, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
+      // .format("YYYY-MM-DDTHH:mm:ss.000Z");
+      const istDateTime = new Date(value.schedule);
+      value.schedule = new Date(
+        istDateTime.getTime() - istDateTime.getTimezoneOffset() * 60000
+      );
     }
-   let files = req.files
+    let files = req.files;
     if (files && files.length > 0) {
-      data.image = await uploadFile(files[0]); 
+      data.image = await uploadFile(files[0]);
     }
 
     await eventModle.findOneAndUpdate(
@@ -147,10 +145,58 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const attendees = async function (req, res) {
+  try {
+    const { userId } = req.params;
+    const { eventId } = req.body;
+    if (!eventId)
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: "please provide eventId whom you attened",
+        });
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "please enter valid userId" });
+    }
+    const user = await userModel.findById(userId);
+    if (!user)
+      return res.status(404).send({ status: false, message: "user not found" });
+    console.log(req.decode, userId)
+    if (req.decode !== userId) {
+      return res
+        .status(403)
+        .send({ status: false, message: "unauthorized user" });
+    }
+
+    const event = await eventModle.findById(eventId);
+
+    if (event.attendees.includes(userId)) {
+      return res
+        .status(400)
+        .send({ msg: "You already resgistered for this event" });
+    } else {
+       event.attendees.push(user);
+
+      
+    }
+     await event.save()
+    return res.status(200).send({ message: "You are registered successfully" });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "server error", error: err.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getById,
   getAllEvent,
   updateEvent,
   deleteEvent,
+  attendees,
 };

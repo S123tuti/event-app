@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const app = express()
 const multer = require("multer")
- require("dotenv").config()
+ require("dotenv").config({path:"../.env"})
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

@@ -4,8 +4,8 @@ const eventModel = require ('../models/eventModel')
 
 
 const authentication  = (req, res, next)=>{
-    let authtoken = req.header.authrization 
-
+    let authtoken = req.headers.authorization 
+   console.log(authtoken)
     if(!authtoken){
         return res
         .status(401)
