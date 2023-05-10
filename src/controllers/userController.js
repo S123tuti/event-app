@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { userValid, loginvaild } = require("../validation/userValid");
 const jwt = require("jsonwebtoken")
 
+// ====================================user created==================================================================
 const createUser = async (req,res) => {
   try {
     let data = req.body;
@@ -45,6 +46,7 @@ const createUser = async (req,res) => {
   }
 };
 
+// ========================================login=================================================================
 const userLogin = async (req,res)=>{
 try {
     const data = req.body

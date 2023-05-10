@@ -1,4 +1,4 @@
-const eventModle = require("../models/eventModel");
+const eventModel = require("../models/eventModel");
 const userModel = require("../models/userModel");
 const { eventvalid, updateEventValid } = require("../validation/eventValid");
 const uploadFile = require("../awsConfig/aws");
@@ -6,6 +6,8 @@ const moment = require("moment-timezone");
 const { parse } = require("dotenv");
 const { default: mongoose } = require("mongoose");
 
+
+// ===========================================create event=======================================================
 const createEvent = async (req, res) => {
   let data = req.body;
   const files = req.files;
@@ -28,7 +30,7 @@ const createEvent = async (req, res) => {
   );
 
   let img = await uploadFile(files[0]);
-  let event = await new eventModle({
+  let event = new eventModel({
     type: value.type,
     name: value.name,
     tagline: value.tagline,
@@ -46,10 +48,11 @@ const createEvent = async (req, res) => {
     .send({ status: true, message: "event created successfuly", data: event });
 };
 
+// ======================================get by id==================================================================
 const getById = async (req, res) => {
   try {
-    let eventId = req.params.id;
-    const findEvent = await eventModle.findById({ _id: eventId });
+    let eventId = req.params.eventId;
+    const findEvent = await eventModel.findById({ _id: eventId });
 
     return res.status(200).send({
       status: true,
@@ -58,17 +61,18 @@ const getById = async (req, res) => {
     });
   } catch (err) {
     return res
-      .status(500)
+      .status(500) 
       .send({ status: false, message: "server error", error: err.message });
-  }
+  } 
 };
 
+// =========================================all events============================================================
 const getAllEvent = async (req, res) => {
   try {
     let page = req.query.page;
     let limit = req.query.limit;
     let skipIndex = (page - 1) * limit;
-    let filterdata = await eventModle
+    let filterdata = await eventModel
       .find({ isDeleted: false })
       .sort({ schedule: 1 })
       .skip(skipIndex)
@@ -86,10 +90,12 @@ const getAllEvent = async (req, res) => {
   }
 };
 
+// ==========================================update event===========================================================
+
 const updateEvent = async (req, res) => {
   try {
     let data = req.body;
-    let eventId = req.params.id;
+    let eventId = req.params.eventId;
     const { err, value } = updateEventValid.validate(data);
 
     if (err) {
@@ -109,7 +115,7 @@ const updateEvent = async (req, res) => {
       data.image = await uploadFile(files[0]);
     }
 
-    await eventModle.findOneAndUpdate(
+    await eventModel.findOneAndUpdate(
       { _id: eventId },
       { $set: value },
       { upsert: true },
@@ -125,11 +131,12 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// ====================================delete event by id===========================================================
 const deleteEvent = async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const eventId = req.params.eventId;
 
-    await eventModle.findOneAndUpdate(
+    await eventModel.findOneAndUpdate(
       { _id: eventId },
       {
         $set: { isDeleted: true },
@@ -145,6 +152,8 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+// ===========================================attendees==========================================================
+
 const attendees = async function (req, res) {
   try {
     const { userId } = req.params;
@@ -154,7 +163,7 @@ const attendees = async function (req, res) {
         .status(400)
         .send({
           status: false,
-          message: "please provide eventId whom you attened",
+          message: "please provide eventId whom you attended",
         });
 
     if (!mongoose.isValidObjectId(userId)) {
@@ -165,22 +174,21 @@ const attendees = async function (req, res) {
     const user = await userModel.findById(userId);
     if (!user)
       return res.status(404).send({ status: false, message: "user not found" });
-    console.log(req.decode, userId)
+  
     if (req.decode !== userId) {
       return res
         .status(403)
         .send({ status: false, message: "unauthorized user" });
     }
 
-    const event = await eventModle.findById(eventId);
+    const event = await eventModel.findById(eventId);
 
-    if (event.attendees.includes(userId)) {
+    if (event.attendees.includes(userId) || event.moderator.toString() === userId) {
       return res
         .status(400)
         .send({ msg: "You already resgistered for this event" });
     } else {
        event.attendees.push(user);
-
       
     }
      await event.save()

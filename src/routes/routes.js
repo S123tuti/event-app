@@ -13,13 +13,16 @@ router.post('/register', createUser);
 router.post('/login', userLogin);
 
 // =================================events=====================================================================================
+
 router.post('/events',authentication, createEvent);
-router.get('/events/:id',authentication,authorization ,getById);
+router.get('/events/:eventId',authentication,authorization ,getById);
 router.get('/events',authentication,getAllEvent);
-router.put('/events/:id',authentication,authorization ,updateEvent);
-router.delete('/events/:id',authentication,authorization , deleteEvent);
+router.put('/events/:eventId',authentication,authorization, updateEvent);
+router.delete('/events/:eventId',authentication,authorization, deleteEvent);
 
 // =====================================AttendieesApi==========================================================================
-router.post("/attendees/:userId",authentication,attendees)
+
+router.post("/attendees/:userId",authentication,attendees) 
+
 
 module.exports = router;

@@ -14,9 +14,9 @@ const eventvalid = Joi.object({
     sub_category: Joi.string().required().label("sub_category"),     
     rigor_rank: Joi.number().required().label("rigor_rank"),  
     // attendees:Joi.array().items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/).label('UserID')),
+});
 
-    
-    });
+
 const updateEventValid = Joi.object({
 
     type: Joi.string().label("event"),    
@@ -30,8 +30,6 @@ const updateEventValid = Joi.object({
     sub_category: Joi.string().label("sub_category"),    
     rigor_rank: Joi.number().label("rigor_rank"),  
     // attendees:Joi.array().items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/).label('UserID')),
+});
 
-    
-    });
-
-    module.exports = {eventvalid,updateEventValid}
+    module.exports = {eventvalid, updateEventValid}

@@ -1,5 +1,5 @@
 const Joi = require("joi")
-let enumgender = ["Male", "Female","Others"]
+let enumgender = ["Male", "Female","Other"]
 const userValid = Joi.object({
     name: Joi.string().required().label("Name"),
     email: Joi.string().required().label("Email"),
