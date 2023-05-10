@@ -10,7 +10,7 @@ create, get, update, delete
 # Run locally follow these Commads
 # clone the Project
 ```bash
-git clone 
+git clone https://github.com/S123tuti/event-app.git
 switch the branch using this command
 bash git checkout master
 Then go to src using this command cd src
